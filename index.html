@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="IGFuse: Interactive 3D Gaussian Scene Reconstruction via Multi-Scans Fusion">
+  <meta name="keywords" content="3DGS,  Segmentation">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IGFuse</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "$",  right: "$",  display: false},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false
+    });
+  });
+</script>
+
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="./static/css/compare.css">
+  <link rel="icon" href="./static/images/logo.png">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  <script src="./static/js/compare.js"></script>
+</head>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const videos = [document.getElementById('leftVideo'),document.getElementById('depthOursVideo'),document.getElementById('depthGroupingVideo'), document.getElementById('rightVideo')];
+
+  // 定时检测并恢复播放
+  setInterval(() => {
+    videos.forEach(video => {
+      if (video.paused) {
+        video.play().catch(() => {});
+      }
+    });
+  }, 1000);
+});
+</script>
+
+<body>
+
+ 
+  <!-- 标题、作者、链接 -->
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-widescreen">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title"><span
+                style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold;">IGFuse</span>:
+              Interactive 3D Gaussian <br> Scene Reconstruction via
+              Multi-Scans Fusion</h1>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                Wenhao Hu<sup>1,3</sup>,</span>
+              <span class="author-block">
+                Zesheng Li<sup>2</sup>,</span>
+              <span class="author-block">
+                Haonan Zhou<sup>2</sup>,
+              </span>
+              <span class="author-block">
+                Liu Liu<sup>3</sup>,
+              </span>
+              <span class="author-block">
+                Xuexiang Wen<sup>2</sup>,
+              </span>
+              <span class="author-block">
+                Zhizhong Su<sup>3</sup>,
+              </span>
+              <span class="author-block">
+                Xi Li<sup>1</sup>
+              </span>
+              <span class="author-block">
+                Gaoang Wang<sup>1</sup>
+              </span>
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup>College of Computer Science and Technology, Zhejiang University</span><br>
+              <span class="author-block"><sup>2</sup>ZJU-UIUC Institute, Zhejiang University</span><br>
+              <span class="author-block"><sup>2</sup>Horizon Robotics</span>
+            </div>
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <!-- PDF Link. -->
+                <span class="link-block">
+                  <a href="" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                    </span>
+                    <span>Paper</span>
+                  </a>
+                </span>
+                <span class="link-block">
+                  <a href="" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                    </span>
+                    <span>arXiv</span>
+                  </a>
+                </span>
+                <!-- Video Link. -->
+                <!-- <span class="link-block">
+                  <a href="https://www.youtube.com/watch?v=MrKrnHhk8IA"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                    </span>
+                    <span>Video</span>
+                  </a>
+                </span> -->
+                <!-- Code Link. -->
+                <span class="link-block">
+                  <a href="" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code</span>
+                  </a>
+                </span>
+                <!-- Dataset Link. -->
+                <!-- <span class="link-block">
+                  <a href="https://github.com/google/nerfies/releases/tag/0.1"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="far fa-images"></i>
+                    </span>
+                    <span>Data</span>
+                  </a> -->
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 对比视频 -->
+  <section class="section">
+    <div class="container is-max-desktop">
+
+      <!-- Animation title. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-9">
+          <h2 class="title is-3">Animation Results</h2>
+        </div>
+      </div>
+      <!--/ Animation title. -->
+
+      
+
+      <!-- comparison. -->
+      <div class="compare-container">
+        <div class="video-wrapper" id="videoWrapper">
+          <div class="compare-video-container">
+
+            <div class="video-clip left">
+              <video id="leftVideo"  loop muted playsinline src="./static/videos/labubu/Ours.mp4">
+                <!-- <source src="./static/videos/fruit/Ours.mp4" type="video/mp4"> -->
+              </video>
+            </div>
+
+            <div class="video-clip right" id="videoClip">
+              <video id="rightVideo"  loop muted playsinline src="./static/videos/labubu/Grouping.mp4">
+                <!-- <source  type="video/mp4"> -->
+              </video>
+            </div>
+
+            <div class="compare-slider" id="compareSlider"></div>
+            <div class="compare-label left" id="leftLabel">Method A</div>
+            <div class="compare-label right" id="rightLabel">Method B</div>
+          </div>
+        </div>
+      </div>
+      <!-- comparison. -->
+<!-- scenes. -->
+      <div class="column has-text-centered">
+        
+        <div class="button-group">
+          <div class="section-title">Scenes:</div>
+          <button class="compare-button btn_scene selected" data-scene="labubu">Labubu</button>
+          <button class="compare-button btn_scene " data-scene="fruit">Fruit</button>
+          <button class="compare-button btn_scene" data-scene="sim_car">Car</button>
+          <button class="compare-button btn_scene" data-scene="toy">Toy</button>
+          <button class="compare-button btn_scene" data-scene="sim_table">Sofa</button>
+          <button class="compare-button btn_scene" data-scene="sim_chair">Chair</button>
+          
+        </div>
+      </div>
+      <!-- scenes. -->
+      <!-- method -->
+      <div class="column has-text-centered">
+        
+        <div class="button-group">
+          <div class="section-title">Methods:</div>
+          <button class="compare-button btn_method selected" data-method="Grouping">GaussianGrouping</button>
+          <button class="compare-button btn_method" data-method="Gcut">GaussianCut</button>
+          <button class="compare-button btn_method" data-method="DG">DecoupledGaussian</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+  <!-- Video -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      <!-- Paper video. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-11">
+          <h2 class="title is-3">Video</h2>
+          <div class="publication-video">
+            <video id="paperVideo" preload controls playsinline width="100%">
+              <source src="static/videos/papervideo.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Abstract -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      <!-- Abstract. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-11">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              Reconstructing complete and interactive 3D scenes remains a fundamental
+              challenge in computer vision and robotics, particularly due to persistent
+              object occlusions and limited sensor coverage. Even multi-view observations
+              from a single scene scan often fail to capture the full structural details.
+              Existing approaches typically rely on multi-stage pipelines—such as segmentation,
+              background completion, and inpainting—or require per-object dense scanning,
+              both of which are error-prone, and not easily scalable.
+            
+              We propose <span
+                style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold;">IGFuse</span>
+              , a novel framework that reconstructs interactive Gaussian
+              scene by fusing observations from multiple scans, where natural object
+              rearrangement between captures reveal previously occluded regions.
+              Our method constructs segmentation-aware Gaussian fields and enforces
+              bi-directional photometric and semantic consistency across scans.
+              To handle spatial misalignments, we introduce a pseudo-intermediate scene state
+              for symmetric alignment, alongside collaborative co-pruning strategies to refine geometry.
+            
+              IGFuse enables high-fidelity rendering and object-level scene manipulation without dense
+              observations or complex pipelines. Extensive experiments validate the framework’s strong
+              generalization to novel scene configurations, demonstrating its effectiveness for real-world
+              3D reconstruction and real-to-simulation transfer.
+            </p>
+          </div>
+        </div>
+      </div>
+      <!--/ Abstract. -->
+
+    </div>
+  </section>
+  
+  
+  
+
+
+<!-- Paper method. -->
+  <section class="section">
+    <div class="container is-max-desktop">
+      <!-- Paper method. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-11">
+          <h2 class="title is-3">Methodology</h2>
+        <!-- </div>
+      </div>
+
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths"> -->
+          <div class="publication-image">
+            <img src="static/images/method.png" alt="method" width="100%">
+          </div>
+        <!-- </div>
+      </div>
+
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-centered is-four-fifths"> -->
+          <div class="has-text-justified ">
+            <p>
+              Overview of our dual-state Gaussian alignment pipeline.
+              Given two input scans (scan $i$ and scan $j$), the Gaussians in state $i$
+              are initially constrained by corresponding image observations. After
+              transferring to state $j$ (i.e., $G_i \rightarrow G_{i \rightarrow j}$),
+              the Gaussians are further supervised by state $j$’s image via an alignment
+              loss $\mathcal{L}_{\text{align}}$, and regularized through a co-pruning strategy
+              that enforces 3D consistency by removing mismatched or redundant components.
+              The reverse transfer ($G_j \rightarrow G_{j \rightarrow i}$) is performed
+              symmetrically. Additionally, both states are transferred into a shared
+              pseudo-state space ($G_{i \rightarrow p}$, $G_{j \rightarrow p}$),
+              where a pseudo-state loss $\mathcal{L}_{\text{pseudo}}$ encourages tighter
+              cross-state alignment.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- bg fo -->
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <!-- 标题 -->
+    <div class="columns is-centered">
+      <div class="column is-11 has-text-centered">
+        <h2 class="title is-3">Foreground & Background</h2>
+      </div>
+    </div>
+
+    <!-- Ours -->
+    <div class="columns is-centered">
+      <div class="column is-11 has-text-centered">
+        <h3 class="title is-4">Foreground</h3>
+        
+        <video id="depthOursVideo" class="mb-5" style="display:block; margin:auto; border-radius:12px;border:1px solid #ccc;"  preload autoplay loop muted playsinline>
+          <source src="static/videos/fo.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+
+    <!-- 描述文字 -->
+    <div class="columns is-centered">
+      <div class="column is-11">
+        <p class="has-text-justified">
+          Our method fuses foreground information from multi-scans, thereby enabling more realistic simulations across diverse states.
+        </p>
+      </div>
+    </div>
+
+    <!-- Gaussian Grouping -->
+    <div class="columns is-centered">
+      <div class="column is-11 has-text-centered">
+        <h3 class="title is-4">Background</h3>
+        <video id="depthGroupingVideo" style="display:block; margin:auto; border-radius:12px;border:1px solid #ccc;"  preload autoplay loop muted playsinline>
+          <source src="static/videos/bg.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+
+    <!-- 描述文字 -->
+    <div class="columns is-centered">
+      <div class="column is-11">
+        <p class="has-text-justified">
+          Our method integrates information from multiple scans to reconstruct a complete background.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Depth. -->
+ <section class="section">
+  <div class="container is-max-desktop">
+
+    <!-- 标题 -->
+    <div class="columns is-centered">
+      <div class="column is-11 has-text-centered">
+        <h2 class="title is-3">Segmentation & Depth</h2>
+      </div>
+    </div>
+
+    <!-- Ours -->
+    <div class="columns is-centered">
+      <div class="column is-11 has-text-centered">
+        <h3 class="title is-4">Ours</h3>
+        
+        <video id="depthOursVideo" class="mb-5" style="display:block; margin:auto; border-radius:12px;border:1px solid #ccc;"  preload autoplay loop muted playsinline>
+          <source src="static/videos/combined_ours.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+
+    <!-- Gaussian Grouping -->
+    <div class="columns is-centered">
+      <div class="column is-11 has-text-centered">
+        <h3 class="title is-4">Gaussian Grouping</h3>
+        <video id="depthGroupingVideo" style="display:block; margin:auto; border-radius:12px;border:1px solid #ccc;"  preload autoplay loop muted playsinline>
+          <source src="static/videos/combined_grouping.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+
+    <!-- 描述文字 -->
+    <div class="columns is-centered">
+      <div class="column is-11">
+        <p class="has-text-justified">
+          Compared with the baseline Gaussian Grouping in the novel state, our method produces cleaner segmentation results. Gaussian Grouping often yields holes or extraneous regions along object boundaries in 2D segmentation.
+          In terms of depth, its feature-based segmentation fails to propagate to all 3D points, resulting in numerous residual points after object movement and leaving depth holes in the regions from which objects are moved.
+
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+<!-- 
+  <section class="section">
+    <div class="container is-max-desktop">
+      <!-- Concurrent Work. ->
+      <div class="columns is-centered">
+        <div class="column is-full-width">
+          <h2 class="title is-3">Related Links</h2>
+
+          <div class="content has-text-justified">
+            <p>
+              There's a lot of excellent work that was introduced around the same time as ours.
+            </p>
+            <p>
+              <a href="https://arxiv.org/abs/2104.09125">Progressive Encoding for Neural Optimization</a> introduces an
+              idea similar to our windowed position encoding for coarse-to-fine optimization.
+            </p>
+            <p>
+              <a href="https://www.albertpumarola.com/research/D-NeRF/index.html">D-NeRF</a> and <a
+                href="https://gvv.mpi-inf.mpg.de/projects/nonrigid_nerf/">NR-NeRF</a>
+              both use deformation fields to model non-rigid scenes.
+            </p>
+            <p>
+              Some works model videos with a NeRF by directly modulating the density, such as <a
+                href="https://video-nerf.github.io/">Video-NeRF</a>, <a
+                href="https://www.cs.cornell.edu/~zl548/NSFF/">NSFF</a>, and <a
+                href="https://neural-3d-video.github.io/">DyNeRF</a>
+            </p>
+            <p>
+              There are probably many more by the time you are reading this. Check out <a
+                href="https://dellaert.github.io/NeRF/">Frank Dellart's survey on recent NeRF papers</a>, and <a
+                href="https://github.com/yenchenlin/awesome-NeRF">Yen-Chen Lin's curated list of NeRF papers</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+      <!--/ Concurrent Work. ->
+
+    </div>
+  </section> -->
+
+<!-- 
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <div class="columns is-centered">
+      <div class="column is-11">
+        
+      
+      <h2 class="title">BibTeX</h2>
+      <pre><code>@article{park2021nerfies,
+  author    = {Park, Keunhong and Sinha, Utkarsh and Barron, Jonathan T. and Bouaziz, Sofien and Goldman, Dan B and Seitz, Steven M. and Martin-Brualla, Ricardo},
+  title     = {Nerfies: Deformable Neural Radiance Fields},
+  journal   = {ICCV},
+  year      = {2021},
+}</code></pre>
+    </div></div>
+    </div>
+  </section>-->
+
+
+
+  <footer class="footer">
+    <div class="container">
+      <!-- 
+      <div class="content has-text-centered">
+        <a class="icon-link" href="./static/videos/nerfies_paper.pdf">
+          <i class="fas fa-file-pdf"></i>
+        </a>
+        <a class="icon-link" href="https://github.com/keunhong" class="external-link" disabled>
+          <i class="fab fa-github"></i>
+        </a>
+      </div> -->
+
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              This website is licensed under a <a rel="license"
+                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+                Commons Attribution-ShareAlike 4.0 International License</a>.
+            </p>
+            <p>
+              We thank the authors of  <a href="https://github.com/nerfies/nerfies.github.io">Nerfies </a> for kindly open-sourcing the template of this website.
+              
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>
