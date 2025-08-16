@@ -1,0 +1,310 @@
+.compare-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.title {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.section-title {
+    font-weight: bold;
+    margin: 10px 0 10px;
+    font-size: 1.2rem;
+    color: #0b0b0b;
+}
+
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    /* margin-bottom: 25px; */
+}
+
+.compare-button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.compare-button:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+.compare-button.selected {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.video-wrapper {
+    position: relative;
+    width: 77%;
+    max-width: 900px;
+    margin: 5px auto;
+    border-radius: 15px;
+    overflow: hidden;
+    cursor: ew-resize;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.compare-video-container {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    background: #000;
+    overflow: hidden;
+}
+
+/* 左侧视频 - 作为背景层，完整显示 */
+.video-clip.left {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    /* 确保左侧视频始终可见 */
+    opacity: 1;
+    visibility: visible;
+}
+
+.video-clip.left > video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    /* 确保视频始终被渲染 */
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 右侧视频 - 作为覆盖层，通过clip-path裁剪 */
+.video-clip.right {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    /* 初始状态显示右半部分，确保至少有1%可见 */
+    clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%);
+    /* 强制视频保持活跃状态 */
+    will-change: clip-path;
+}
+
+.video-clip.right > video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    /* 确保视频始终被渲染 */
+    opacity: 1;
+    visibility: visible;
+}
+
+.compare-slider {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, #fff, #f0f0f0);
+    z-index: 3;
+    cursor: ew-resize;
+    transform: translateX(-50%);
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.compare-slider::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.compare-slider::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    background: #666;
+    border-radius: 1px;
+    pointer-events: none;
+    z-index: 1;
+    /* 创建四个小点的拖拽图标 */
+    box-shadow: 
+        -3px -3px 0 0 #764ba2,
+        3px -3px 0 0 #764ba2,
+        -3px 3px 0 0 #764ba2,
+        3px 3px 0 0 #764ba2;
+}
+
+.compare-label {
+    position: absolute;
+    top: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 0 10px rgba(0,0,0,0.8);
+    z-index: 4;
+    padding: 8px 16px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+}
+
+.compare-label.left {
+    left: 15px;
+}
+
+.compare-label.right {
+    right: 15px;
+}
+
+.controls {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.control-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.control-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .title {
+        font-size: 2rem;
+    }
+    
+    .video-wrapper {
+        width: 75%;
+    }
+    
+    .compare-label {
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+    
+    /* .button-group {
+        gap: 8px;
+    } */
+    
+    .compare-button {
+        padding: 10px 18px;
+        font-size: 13px;
+    }
+}
+
+/* 响应式对比视频样式 */
+.compare-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto 2rem;
+  padding: 0 1rem;
+}
+
+/* .video-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  aspect-ratio: 16/9;
+} */
+
+.button-group-container {
+  width: 100%;
+  max-width: 100%;
+  padding: 0 1rem;
+  margin: 1.5rem 0;
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+  .video-wrapper {
+    aspect-ratio: 4/3;
+    max-height: 60vh;
+  }
+  
+  .button-group {
+    gap: 0.3rem;
+  }
+  
+  .compare-button {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .video-wrapper {
+    aspect-ratio: 1/1;
+    max-height: 50vh;
+  }
+  
+  .button-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .compare-button {
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto;
+  }
+}
