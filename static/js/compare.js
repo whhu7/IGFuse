@@ -456,7 +456,7 @@ class VideoComparison {
     leftLoadingDiv.innerHTML = `
       <div class="loading-content">
         <div class="loading-spinner"></div>
-        <div class="loading-text">视频加载中...</div>
+        <div class="loading-text">loading...</div>
       </div>
     `;
     leftLoadingDiv.style.cssText = `
@@ -481,7 +481,7 @@ class VideoComparison {
     rightLoadingDiv.innerHTML = `
       <div class="loading-content">
         <div class="loading-spinner"></div>
-        <div class="loading-text">视频加载中...</div>
+        <div class="loading-text">loading...</div>
       </div>
     `;
     rightLoadingDiv.style.cssText = `
